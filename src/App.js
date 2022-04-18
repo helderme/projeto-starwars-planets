@@ -1,14 +1,13 @@
 import React from 'react';
 import './App.css';
 import ApiProvider from './context/ApiProvider';
+import Planets from './Pages/Planets';
 
 function App() {
   return (
-    <>
-      <ApiProvider>
-        <div>Olá</div>
-      </ApiProvider>
-    </>
+    <ApiProvider>
+      <Planets />
+    </ApiProvider>
   );
 }
 

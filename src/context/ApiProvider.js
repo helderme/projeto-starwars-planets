@@ -1,19 +1,29 @@
+import PropTypes from 'prop-types';
 import React, { useState } from 'react';
+import fetchPlanets from '../services/fetchPlanets';
 import ApiContext from './ApiContext';
-import { fetchPlanets } from '../services/fetchPlanets';
 
 function ApiProvider(props) {
-  const [planets, setPlanets] = useState();
+  const { children } = props;
+  const [planets, setPlanets] = useState([]);
+  const [tableHeaders, setTableHeaders] = useState([]);
 
-  function getPlanets() {
-    setPlanets([fetchPlanets()]);
+  async function getPlanets() {
+    const { results } = await fetchPlanets();
+    results.map((planet) => delete planet.residents);
+    setPlanets(results);
+    setTableHeaders(Object.keys(results[0]));
   }
 
   return (
-    <ApiContext.Provider value={ { teste: 'olá' } }>
-      {props.children}
+    <ApiContext.Provider value={ { planets, tableHeaders, getPlanets } }>
+      {children}
     </ApiContext.Provider>
   );
 }
+
+ApiProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 export default ApiProvider;
