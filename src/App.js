@@ -1,9 +1,14 @@
 import React from 'react';
 import './App.css';
+import ApiProvider from './context/ApiProvider';
 
 function App() {
   return (
-    <span>Hello, App!</span>
+    <>
+      <ApiProvider>
+        <div>Olá</div>
+      </ApiProvider>
+    </>
   );
 }
 
