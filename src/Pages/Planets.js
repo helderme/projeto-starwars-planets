@@ -2,13 +2,24 @@ import React, { useContext, useEffect } from 'react';
 import ApiContext from '../context/ApiContext';
 
 function Planets() {
-  const { getPlanets, planets, tableHeaders } = useContext(ApiContext);
+  const { getPlanets,
+    planets,
+    tableHeaders,
+    filterByName,
+    filterName } = useContext(ApiContext);
+
   useEffect(() => {
     getPlanets();
   }, []);
 
   return (
     <div>
+      <input
+        data-testid="name-filter"
+        type="text"
+        value={ filterName.filterByName.name }
+        onChange={ filterByName }
+      />
       <table>
         <tr>
           {tableHeaders.map((tableHeader) => <th key={ tableHeader }>{tableHeader}</th>)}
@@ -25,7 +36,4 @@ function Planets() {
   );
 }
 
-/*     const response = await fetch(endpoint);
-    const data = await response.json();
-    console.log(data); */
 export default Planets;
