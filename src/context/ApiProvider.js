@@ -15,6 +15,13 @@ function ApiProvider(props) {
     filterByName: { name: '' },
   };
 
+  const INITIAL_COLUMNS = [
+    'population',
+    'orbital_period',
+    'diameter',
+    'rotation_period',
+    'surface_water'];
+
   const { children } = props;
   const [dataPlanets, setDataPlanets] = useState([]);
   const [planets, setPlanets] = useState([]);
@@ -22,6 +29,7 @@ function ApiProvider(props) {
   const [filterName, setFilterName] = useState(INITIAL_NAME_FILTER);
   const [filterConfig, setFilterConfig] = useState(INITIAL_FILTER_CONFIG);
   const [filterNumber, setFilterNumber] = useState([]);
+  const [columns, setColumns] = useState(INITIAL_COLUMNS);
 
   async function getPlanets() {
     const { results } = await fetchPlanets();
@@ -56,6 +64,12 @@ function ApiProvider(props) {
     setFilterNumber([...filterNumber, { ...filterConfig, index: newIndex }]);
   }
 
+  function enabledColumns() {
+    const enabled = columns
+      .filter((column) => filterNumber.every((filter) => filter.column !== column));
+    setColumns(enabled);
+  }
+
   function checkFilterPlanet(planet) {
     const check = [];
     filterNumber.forEach((filter) => {
@@ -84,12 +98,14 @@ function ApiProvider(props) {
     filterName,
     filterNumber,
     filterConfig,
+    columns,
     getPlanets,
     filterByName,
     filterNumberConfig,
     filterByNumber,
     deleteFilter,
     addFilter,
+    enabledColumns,
   };
 
   return (

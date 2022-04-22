@@ -12,7 +12,9 @@ function Planets() {
     filterByNumber,
     addFilter,
     filterConfig,
-    filterNumberConfig } = useContext(ApiContext);
+    filterNumberConfig,
+    enabledColumns,
+    columns } = useContext(ApiContext);
 
   useEffect(() => {
     getPlanets();
@@ -20,6 +22,7 @@ function Planets() {
 
   useEffect(() => {
     filterByNumber();
+    enabledColumns();
   }, [filterNumber]);
 
   return (
@@ -36,11 +39,7 @@ function Planets() {
         value={ filterConfig.column }
         onChange={ filterNumberConfig }
       >
-        <option>population</option>
-        <option>orbital_period</option>
-        <option>diameter</option>
-        <option>rotation_period</option>
-        <option>surface_water</option>
+        {columns.map((column) => <option key={ column }>{column}</option>)}
       </select>
       <select
         data-testid="comparison-filter"
