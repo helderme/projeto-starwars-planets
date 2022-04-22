@@ -14,7 +14,8 @@ function Planets() {
     filterConfig,
     filterNumberConfig,
     enabledColumns,
-    columns } = useContext(ApiContext);
+    columns,
+    removeAllFilters } = useContext(ApiContext);
 
   useEffect(() => {
     getPlanets();
@@ -64,6 +65,13 @@ function Planets() {
         onClick={ addFilter }
       >
         FILTRAR
+      </button>
+      <button
+        type="button"
+        data-testid="button-remove-filters"
+        onClick={ removeAllFilters }
+      >
+        REMOVER FILTROS
       </button>
       <Filters />
       <table>

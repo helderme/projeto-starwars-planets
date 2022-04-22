@@ -20,7 +20,8 @@ function ApiProvider(props) {
     'orbital_period',
     'diameter',
     'rotation_period',
-    'surface_water'];
+    'surface_water',
+  ];
 
   const { children } = props;
   const [dataPlanets, setDataPlanets] = useState([]);
@@ -65,7 +66,7 @@ function ApiProvider(props) {
   }
 
   function enabledColumns() {
-    const enabled = columns
+    const enabled = INITIAL_COLUMNS
       .filter((column) => filterNumber.every((filter) => filter.column !== column));
     setColumns(enabled);
   }
@@ -92,6 +93,10 @@ function ApiProvider(props) {
     setPlanets(filtered);
   }
 
+  function removeAllFilters() {
+    setFilterNumber([]);
+  }
+
   const providerValue = {
     planets,
     tableHeaders,
@@ -106,6 +111,7 @@ function ApiProvider(props) {
     deleteFilter,
     addFilter,
     enabledColumns,
+    removeAllFilters,
   };
 
   return (
