@@ -4,20 +4,24 @@ import fetchPlanets from '../services/fetchPlanets';
 import ApiContext from './ApiContext';
 
 function ApiProvider(props) {
-  const INITIAL_NUMBER_FILTER = {
+  const INITIAL_FILTER_CONFIG = {
     column: 'population',
     comparison: 'maior que',
     value: '0',
+    index: 0,
   };
+
   const INITIAL_NAME_FILTER = {
     filterByName: { name: '' },
   };
+
   const { children } = props;
   const [dataPlanets, setDataPlanets] = useState([]);
   const [planets, setPlanets] = useState([]);
   const [tableHeaders, setTableHeaders] = useState([]);
   const [filterName, setFilterName] = useState(INITIAL_NAME_FILTER);
-  const [filterNumber, setFilterNumber] = useState(INITIAL_NUMBER_FILTER);
+  const [filterConfig, setFilterConfig] = useState(INITIAL_FILTER_CONFIG);
+  const [filterNumber, setFilterNumber] = useState([]);
 
   async function getPlanets() {
     const { results } = await fetchPlanets();
@@ -38,23 +42,39 @@ function ApiProvider(props) {
   }
 
   function filterNumberConfig({ target }) {
-    setFilterNumber({ ...filterNumber, [target.name]: target.value });
+    setFilterConfig({ ...filterConfig, [target.name]: target.value });
+  }
+
+  function deleteFilter(index) {
+    const filtered = filterNumber.filter((filter) => filter.index !== index);
+    setFilterNumber(filtered);
+  }
+
+  function addFilter() {
+    const last = filterNumber[filterNumber.length - 1];
+    const newIndex = last ? last.index + 1 : 0;
+    setFilterNumber([...filterNumber, { ...filterConfig, index: newIndex }]);
+  }
+
+  function checkFilterPlanet(planet) {
+    const check = [];
+    filterNumber.forEach((filter) => {
+      const { column, comparison, value } = filter;
+      if (comparison === 'maior que') {
+        check.push(Number(planet[column]) > Number(value));
+      }
+      if (comparison === 'menor que') {
+        check.push(Number(planet[column]) < Number(value));
+      }
+      if (comparison === 'igual a') {
+        check.push(Number(planet[column]) === Number(value));
+      }
+    });
+    return check.every((item) => item === true);
   }
 
   function filterByNumber() {
-    const { column, comparison, value } = filterNumber;
-    let filtered = {};
-    if (comparison === 'maior que') {
-      filtered = dataPlanets.filter((planet) => Number(planet[column]) > Number(value));
-    }
-    if (comparison === 'menor que') {
-      filtered = dataPlanets.filter((planet) => Number(planet[column]) < Number(value));
-      console.log(filtered);
-    }
-    if (comparison === 'igual a') {
-      filtered = dataPlanets.filter((planet) => Number(planet[column]) === Number(value));
-      console.log(filtered);
-    }
+    const filtered = dataPlanets.filter((planet) => checkFilterPlanet(planet));
     setPlanets(filtered);
   }
 
@@ -63,10 +83,13 @@ function ApiProvider(props) {
     tableHeaders,
     filterName,
     filterNumber,
+    filterConfig,
     getPlanets,
     filterByName,
     filterNumberConfig,
     filterByNumber,
+    deleteFilter,
+    addFilter,
   };
 
   return (

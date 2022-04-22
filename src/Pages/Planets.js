@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from 'react';
+import Filters from '../components/Filters';
 import ApiContext from '../context/ApiContext';
 
 function Planets() {
@@ -9,11 +10,17 @@ function Planets() {
     filterName,
     filterNumber,
     filterByNumber,
+    addFilter,
+    filterConfig,
     filterNumberConfig } = useContext(ApiContext);
 
   useEffect(() => {
     getPlanets();
   }, []);
+
+  useEffect(() => {
+    filterByNumber();
+  }, [filterNumber]);
 
   return (
     <div>
@@ -26,7 +33,7 @@ function Planets() {
       <select
         data-testid="column-filter"
         name="column"
-        value={ filterNumber.column }
+        value={ filterConfig.column }
         onChange={ filterNumberConfig }
       >
         <option>population</option>
@@ -38,7 +45,7 @@ function Planets() {
       <select
         data-testid="comparison-filter"
         name="comparison"
-        value={ filterNumber.comparison }
+        value={ filterConfig.comparison }
         onChange={ filterNumberConfig }
       >
         <option>maior que</option>
@@ -49,16 +56,17 @@ function Planets() {
         data-testid="value-filter"
         type="number"
         name="value"
-        value={ filterNumber.value }
+        value={ filterConfig.value }
         onChange={ filterNumberConfig }
       />
       <button
         type="button"
         data-testid="button-filter"
-        onClick={ filterByNumber }
+        onClick={ addFilter }
       >
         FILTRAR
       </button>
+      <Filters />
       <table>
         <tr>
           {tableHeaders.map((tableHeader) => <th key={ tableHeader }>{tableHeader}</th>)}
