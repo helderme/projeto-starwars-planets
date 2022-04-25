@@ -132,12 +132,14 @@ function Planets() {
           >
             {tableHeaders.map((tableHeader) => (
               tableHeader === 'name'
-                ? <td key={ planet[tableHeader] } data-testid="planet-name">
-                  {planet[tableHeader]}
-                </td>
-                : <td key={ planet[tableHeader] }>
-                  {planet[tableHeader]}
-                </td>
+                ? (
+                  <td key={ planet[tableHeader] } data-testid="planet-name">
+                    {planet[tableHeader]}
+                  </td>)
+                : (
+                  <td key={ planet[tableHeader] }>
+                    {planet[tableHeader]}
+                  </td>)
             ))}
           </tr>))}
       </table>
