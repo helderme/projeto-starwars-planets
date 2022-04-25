@@ -30,11 +30,22 @@ function ApiProvider(props) {
   const [filterName, setFilterName] = useState(INITIAL_NAME_FILTER);
   const [filterConfig, setFilterConfig] = useState(INITIAL_FILTER_CONFIG);
   const [filterNumber, setFilterNumber] = useState([]);
+  const [orderConfigPlanets, setOrderNumber] = useState([]);
+  const [orderPlanets, setOrder] = useState([]);
   const [columns, setColumns] = useState(INITIAL_COLUMNS);
+
+  function compare(a, b) {
+    const negative = -1;
+    if (a.name < b.name) { return negative; }
+    if (a.name > b.name) { return 1; }
+    return 0;
+  }
 
   async function getPlanets() {
     const { results } = await fetchPlanets();
     results.map((planet) => delete planet.residents);
+    results.sort(compare);
+    console.log(results);
     setDataPlanets(results);
     setPlanets(results);
     setTableHeaders(Object.keys(results[0]));
@@ -93,6 +104,36 @@ function ApiProvider(props) {
     setPlanets(filtered);
   }
 
+  function orderConfig({ target }) {
+    const value = target.type === 'radio' ? target.id : target.value;
+    setOrderNumber({ ...orderConfigPlanets, [target.name]: value });
+  }
+
+  function organizerASC(planetA, planetB) {
+    const negative = -1;
+    if (planetA === 'unknown') { return 1; }
+    if (planetB === 'unknown') { return negative; }
+    return (planetA - planetB);
+  }
+
+  function organizerDESC(planetA, planetB) {
+    const negative = -1;
+    if (planetB === 'unknown') { return negative; }
+    return (planetB - planetA);
+  }
+
+  function orderByNumber() {
+    const { sort } = orderConfigPlanets;
+    const column = orderConfigPlanets.order;
+    const newDataPlanets = [...dataPlanets];
+    const ordened = newDataPlanets
+      .sort((planetA, planetB) => (
+        sort === 'ASC'
+          ? organizerASC(planetA[column], planetB[column])
+          : organizerDESC(planetA[column], planetB[column])));
+    setOrder(ordened);
+  }
+
   function removeAllFilters() {
     setFilterNumber([]);
   }
@@ -103,7 +144,9 @@ function ApiProvider(props) {
     filterName,
     filterNumber,
     filterConfig,
+    INITIAL_COLUMNS,
     columns,
+    orderPlanets,
     getPlanets,
     filterByName,
     filterNumberConfig,
@@ -112,6 +155,9 @@ function ApiProvider(props) {
     addFilter,
     enabledColumns,
     removeAllFilters,
+    orderByNumber,
+    orderConfig,
+    setPlanets,
   };
 
   return (

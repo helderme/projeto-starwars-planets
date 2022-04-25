@@ -14,8 +14,13 @@ function Planets() {
     filterConfig,
     filterNumberConfig,
     enabledColumns,
+    INITIAL_COLUMNS,
     columns,
-    removeAllFilters } = useContext(ApiContext);
+    removeAllFilters,
+    orderByNumber,
+    orderConfig,
+    orderPlanets,
+    setPlanets } = useContext(ApiContext);
 
   useEffect(() => {
     getPlanets();
@@ -26,6 +31,10 @@ function Planets() {
     enabledColumns();
   }, [filterNumber]);
 
+  useEffect(() => {
+    setPlanets(orderPlanets);
+  }, [orderPlanets]);
+
   return (
     <div>
       <input
@@ -34,14 +43,19 @@ function Planets() {
         value={ filterName.filterByName.name }
         onChange={ filterByName }
       />
-      <select
-        data-testid="column-filter"
-        name="column"
-        value={ filterConfig.column }
-        onChange={ filterNumberConfig }
-      >
-        {columns.map((column) => <option key={ column }>{column}</option>)}
-      </select>
+      <label htmlFor="column">
+        Column:
+        <select
+          data-testid="column-filter"
+          name="column"
+          id="column"
+          value={ filterConfig.column }
+          onChange={ filterNumberConfig }
+        >
+          {columns.map((column) => <option key={ column }>{column}</option>)}
+        </select>
+      </label>
+
       <select
         data-testid="comparison-filter"
         name="comparison"
@@ -66,6 +80,40 @@ function Planets() {
       >
         FILTRAR
       </button>
+      <label htmlFor="column-sort">
+        Order:
+        <select
+          id="column-sort"
+          name="order"
+          data-testid="column-sort"
+          onChange={ orderConfig }
+        >
+          {INITIAL_COLUMNS.map((column) => <option key={ column }>{column}</option>)}
+        </select>
+      </label>
+      <label htmlFor="ASC">
+        Ascending
+        <input
+          data-testid="column-sort-input-asc"
+          type="radio"
+          name="sort"
+          id="ASC"
+          onChange={ orderConfig }
+        />
+      </label>
+      <label htmlFor="DESC">
+        Descending
+        <input
+          data-testid="column-sort-input-desc"
+          type="radio"
+          name="sort"
+          id="DESC"
+          onChange={ orderConfig }
+        />
+      </label>
+      <button type="button" data-testid="column-sort-button" onClick={ orderByNumber }>
+        ORDER
+      </button>
       <button
         type="button"
         data-testid="button-remove-filters"
@@ -79,11 +127,18 @@ function Planets() {
           {tableHeaders.map((tableHeader) => <th key={ tableHeader }>{tableHeader}</th>)}
         </tr>
         {planets.map((planet) => (
-          <tr key={ planet.name }>
+          <tr
+            key={ planet.name }
+          >
             {tableHeaders.map((tableHeader) => (
-              <td key={ planet[tableHeader] }>
-                {planet[tableHeader]}
-              </td>))}
+              tableHeader === 'name'
+                ? <td key={ planet[tableHeader] } data-testid="planet-name">
+                  {planet[tableHeader]}
+                </td>
+                : <td key={ planet[tableHeader] }>
+                  {planet[tableHeader]}
+                </td>
+            ))}
           </tr>))}
       </table>
     </div>
